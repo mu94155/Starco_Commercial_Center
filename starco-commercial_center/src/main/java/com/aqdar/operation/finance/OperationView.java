@@ -2,6 +2,10 @@ package com.aqdar.operation.finance;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import com.aqdar.construction.finance.FundRecieved;
+import com.aqdar.construction.finance.Milestone;
+
 import java.awt.*;
 import java.util.logging.Logger;
 import java.util.ArrayList;
@@ -11,19 +15,30 @@ import java.awt.event.ActionListener;
 
 public class OperationView extends JFrame {
 
+        private JLabel opexTypeLabel;
+        private JLabel yearLabel;
+        private JLabel monthLabel;
+        private JLabel descriptionLabel;
+        private JLabel amountLabel;
+        private JLabel dateLabel;
+        private JLabel quantityLabel;
+        private JLabel displayLabel;
         private JTextField descriptionField;
         private JTextField amountField;
         private JTextField dateField;
         private JTextField quantityField;
+        private JTextField displayField;
         private JTextArea displayArea;
+        private JComboBox<Year> yearComboBox;
+        private JComboBox<Month> monthComboBox;
         private JComboBox<Opex> opexComboBox;
-        private JButton addAdditionalScopePaymentButton;
-        private JButton addMileStonePaymentButton;
-        private JButton addFundButton;
-        private JButton printAdditionalScopePaymentsButton;
-        private JButton printMileStonePaymentsButton;
-        private JButton printFundsButton;
-        private JButton printReportButton;
+        private JButton addExpenseButton;
+        private JButton printTotalMaintenancePerMonthButton;
+        private JButton printTotalExpensesCommonAreaPerMonthButton;
+        private JButton printUtilityExpensesPerShopPerMonthButton;
+        private JButton printRentPaymentPerShopButton;
+        private JButton printCustomerDetailsPerShopButton;
+        private JButton printReportToFile;
         public final transient ButtonClickListener buttonClickListener;
         private static final Logger logger = Logger.getLogger(OperationView.class.getName());
 
@@ -34,7 +49,7 @@ public class OperationView extends JFrame {
                 setLayout(new BorderLayout());
 
                 // Add project name label at the top
-                JLabel projectNameLabel = new JLabel("Starco Commercial Center Project", SwingConstants.CENTER);
+                JLabel projectNameLabel = new JLabel("Starco Commercial Center Project Operation View", SwingConstants.CENTER);
                 projectNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
                 add(projectNameLabel, BorderLayout.NORTH);
 
@@ -45,13 +60,66 @@ public class OperationView extends JFrame {
                 layout.setAutoCreateGaps(true);
                 layout.setAutoCreateContainerGaps(true);
 
+                //instance of the operation view labels and textfields
                 JLabel descriptionLabel = new JLabel("Description:");
                 descriptionField = new JTextField(20);
                 JLabel amountLabel = new JLabel("Amount:");
                 amountField = new JTextField(20);
                 JLabel dateLabel = new JLabel("Date:");
                 dateField = new JTextField(20);
-                JLabel milestoneLabel = new JLabel("Milestone:");
+                JLabel quantityLabel = new JLabel("Quantity:");
+                quantityField = new JTextField(20);
+                JLabel monthLabel = new JLabel("Month:");
+                JLabel opexLabel = new JLabel("Opex:");
+                JLabel yearLabel = new JLabel("Year:");
+                JLabel displayLabel = new JLabel("Display Area:");
+                displayField = new JTextField(20);
+                
+                // year combo box
+                yearComboBox = new JComboBox<>();
+                yearComboBox.addItem(null);
+                for (Year year : Year.values()) {
+                yearComboBox.addItem(year);
+                }
+                yearComboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                setText("Select Year");
+                } else {
+                setText(value.toString());
+                }
+                return this;
+                }
+                });
+                yearComboBox.setSelectedIndex(0);
+
+                // month combo box
+                monthComboBox = new JComboBox<>();
+                monthComboBox.addItem(null);
+                for (Month month : Month.values()) {
+                monthComboBox.addItem(month);
+                }
+                monthComboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                setText("Select Month");
+                } else {
+                setText(value.toString());
+                }
+                return this;
+                }
+                });
+                monthComboBox.setSelectedIndex(0);
+
+                // opex combo box
                 opexComboBox = new JComboBox<>();
                 opexComboBox.addItem(null);
                 for (Opex milestone : Opex.values()) {
@@ -64,7 +132,7 @@ public class OperationView extends JFrame {
                 boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value == null) {
-                setText("Select Milestone");
+                setText("Select Expense type");
                 } else {
                 setText(value.toString());
                 }
@@ -72,19 +140,28 @@ public class OperationView extends JFrame {
                 }
                 });
                 opexComboBox.setSelectedIndex(0);
-
+                
+                // layout for the input panel
                 layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                 .addComponent(descriptionLabel)
                 .addComponent(amountLabel)
                 .addComponent(dateLabel)
-                .addComponent(milestoneLabel))
+                .addComponent(opexTypeLabel)
+                .addComponent(yearLabel)
+                .addComponent(monthLabel)
+                .addComponent(quantityLabel)
+                .addComponent(displayLabel))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(descriptionField)
                 .addComponent(amountField)
                 .addComponent(dateField)
-                .addComponent(opexComboBox)));
+                .addComponent(opexComboBox)
+                .addComponent(yearComboBox)
+                .addComponent(monthComboBox)
+                .addComponent(quantityField)
+                .addComponent(displayField)));
 
                 layout.setVerticalGroup(
                 layout.createSequentialGroup()
@@ -98,9 +175,23 @@ public class OperationView extends JFrame {
                 .addComponent(dateLabel)
                 .addComponent(dateField))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(milestoneLabel)
-                .addComponent(opexComboBox)));
+                .addComponent(opexLabel)
+                .addComponent(opexComboBox)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(yearLabel)
+                .addComponent(yearComboBox))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(monthLabel)
+                .addComponent(monthComboBox))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(quantityLabel)
+                .addComponent(quantityField))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(displayLabel)
+                .addComponent(displayField))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE))));
 
+                //button panels layouts
                 JPanel buttonPanelWest = new JPanel();
                 buttonPanelWest.setLayout(new BoxLayout(buttonPanelWest, BoxLayout.Y_AXIS));
                 buttonPanelWest.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between buttons
@@ -111,50 +202,51 @@ public class OperationView extends JFrame {
                 buttonPanelEast.setLayout(buttonPanelEastLayout);
                 buttonPanelEast.setBorder(new EmptyBorder(10, 10, 10, 10)); // Add padding around the button panel
 
-                addAdditionalScopePaymentButton = new JButton("Add Additional Scope Payment");
-                addMileStonePaymentButton = new JButton("Add MileStone Payment");
-                addFundButton = new JButton("add fund");
-                printAdditionalScopePaymentsButton = new JButton("Print Additional Scope Payments");
-                printMileStonePaymentsButton = new JButton("Print MileStone Payments");
-                printFundsButton = new JButton("Print funds");
-                printReportButton = new JButton("Print report to file");
+                // Buttons for adding and printing expenses
+                addExpenseButton = new JButton("Add Expense");
+                printTotalMaintenancePerMonthButton = new JButton("Print Total Maintenance per month");
+                printUtilityExpensesPerShopPerMonthButton = new JButton("Print utility per shop per month");
+                printTotalExpensesCommonAreaPerMonthButton= new JButton("Print total expenses common area per month");
+                printRentPaymentPerShopButton = new JButton("Print Rent payment per shop");
+                printCustomerDetailsPerShopButton= new JButton("Print customer details per shop");
+                printReportToFile = new JButton("Print report to file");
 
-                // Initialize the button click listener with the WelcomePage2 instance
+                // Initialize the button click listener with the Operation View instance
                 buttonClickListener = new ButtonClickListener(this);
-                addAdditionalScopePaymentButton.addActionListener(buttonClickListener);
-                printAdditionalScopePaymentsButton.addActionListener(buttonClickListener);
-                printMileStonePaymentsButton.addActionListener(buttonClickListener);
-                addMileStonePaymentButton.addActionListener(buttonClickListener);
-                addFundButton.addActionListener(buttonClickListener);
-                printFundsButton.addActionListener(buttonClickListener);
-                printReportButton.addActionListener(buttonClickListener);
+                addExpenseButton.addActionListener(buttonClickListener);
+                printTotalMaintenancePerMonthButton.addActionListener(buttonClickListener);
+                printUtilityExpensesPerShopPerMonthButton.addActionListener(buttonClickListener);
+                printTotalExpensesCommonAreaPerMonthButton.addActionListener(buttonClickListener);
+                printRentPaymentPerShopButton.addActionListener(buttonClickListener);
+                printCustomerDetailsPerShopButton.addActionListener(buttonClickListener);
+                printReportToFile.addActionListener(buttonClickListener);
 
                 // Left justify text on buttons
-                addAdditionalScopePaymentButton.setHorizontalAlignment(SwingConstants.LEFT);
-                addMileStonePaymentButton.setHorizontalAlignment(SwingConstants.LEFT);
-                addFundButton.setHorizontalAlignment(SwingConstants.LEFT);
-                printAdditionalScopePaymentsButton.setHorizontalAlignment(SwingConstants.LEFT);
-                printMileStonePaymentsButton.setHorizontalAlignment(SwingConstants.LEFT);
-                printFundsButton.setHorizontalAlignment(SwingConstants.LEFT);
-                printReportButton.setHorizontalAlignment(SwingConstants.LEFT);
+                addExpenseButton.setHorizontalAlignment(SwingConstants.LEFT);
+                printTotalMaintenancePerMonthButton.setHorizontalAlignment(SwingConstants.LEFT);
+                printUtilityExpensesPerShopPerMonthButton.setHorizontalAlignment(SwingConstants.LEFT);
+                printTotalExpensesCommonAreaPerMonthButton.setHorizontalAlignment(SwingConstants.LEFT);
+                printRentPaymentPerShopButton.setHorizontalAlignment(SwingConstants.LEFT);
+                printCustomerDetailsPerShopButton.setHorizontalAlignment(SwingConstants.LEFT);
+                printReportToFile.setHorizontalAlignment(SwingConstants.LEFT);
 
-                buttonPanelWest.add(addAdditionalScopePaymentButton);
-                buttonPanelWest.add(addMileStonePaymentButton);
-                buttonPanelWest.add(addFundButton);
+                // Add buttons to the button panel
+                buttonPanelWest.add(addExpenseButton);
+                buttonPanelWest.add(printTotalMaintenancePerMonthButton);
+                buttonPanelWest.add(printTotalExpensesCommonAreaPerMonthButton);
 
                 buttonPanelEastLayout.setHorizontalGroup(
                 buttonPanelEastLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                .addComponent(printAdditionalScopePaymentsButton)
-                .addComponent(printMileStonePaymentsButton)
-                .addComponent(printFundsButton)
-                .addComponent(printReportButton));
-
+                .addComponent(printUtilityExpensesPerShopPerMonthButton)
+                .addComponent(printCustomerDetailsPerShopButton)
+                .addComponent(printRentPaymentPerShopButton)
+                .addComponent(printReportToFile));
+                
                 buttonPanelEastLayout.setVerticalGroup(
                 buttonPanelEastLayout.createSequentialGroup()
-                .addComponent(printAdditionalScopePaymentsButton)
-                .addComponent(printMileStonePaymentsButton)
-                .addComponent(printFundsButton)
-                .addComponent(printReportButton));
+                .addComponent(printUtilityExpensesPerShopPerMonthButton)
+                .addComponent(printCustomerDetailsPerShopButton)
+                .addComponent(printRentPaymentPerShopButton));
 
                 add(buttonPanelWest, BorderLayout.WEST);
                 add(buttonPanelEast, BorderLayout.EAST);
@@ -181,45 +273,20 @@ public class OperationView extends JFrame {
                 return displayArea;
         }
 
-        public JComboBox<Opex> getopexComboBox() {
+        public JComboBox<Opex> getOpexComboBox() {
                 return opexComboBox;
-        }
-
-        public JButton getAddAdditionalScopePaymentButton() {
-                return addAdditionalScopePaymentButton;
-        }
-
-        public JButton getAddMileStonePaymentButton() {
-                return addMileStonePaymentButton;
-        }
-
-        public JButton getaddFundButton() {
-                return addFundButton;
-        }
-
-        public JButton getPrintFundsButton() {
-                return printFundsButton;
-        }
-
-        public JButton getPrintAdditionalScopePaymentsButton() {
-                return printAdditionalScopePaymentsButton;
-        }
-
-        public JButton getPrintMileStonePaymentsButton() {
-                return printMileStonePaymentsButton;
         }
 
         // start of the inner class ButtonClickListener
 
         public class ButtonClickListener implements ActionListener {
                 DataToFiles dataToFiles;
-                List<AdditionalScopePayment> additionalScopePayments = new ArrayList<>();
-                List<MileStonePayment> mileStonePayments = new ArrayList<>();
-                List<FundRecieved> fundsRecieved = new ArrayList<>();
-                private final WelcomePage2 welcomePage;
+                List<Opex> costs = new ArrayList<>();
+                List<Expense> expenses = new ArrayList<>();
+                private final OperationView operationView;
 
-                public ButtonClickListener(WelcomePage2 welcomePage) {
-                        this.welcomePage = welcomePage;
+                public ButtonClickListener(OperationView operationView) {
+                        this.operationView = operationView;
                 }
 
                 @Override
@@ -227,12 +294,12 @@ public class OperationView extends JFrame {
                         if (e.getSource() instanceof JButton sourceButton) {
                                 String buttonText = sourceButton.getText();
                                 switch (buttonText) {
-                                        case "add fund" -> handleFunds();
-                                        case "Add Additional Scope Payment" -> handleAddAdditionalScopePayment();
-                                        case "Add MileStone Payment" -> handleAddMileStonePayment();
-                                        case "Print funds" -> printFunds();
-                                        case "Print Additional Scope Payments" -> handleAddAdditionalScopePayment();
-                                        case "Print MileStone Payments" -> handlePrintMileStonePayments();
+                                        case "Add Expense" -> handleAddExpense();
+                                        case "Print Total Maintenance per month" -> handlePrintTotalMaintenancePerMonth();
+                                        case "Print utility per shop per month" -> handlePrintUtilityPerShopPerMonth();
+                                        case "Print total expenses common area per month" -> handlePrintTotalExpensesCommonAreaPerMonth();
+                                        case "Print Rent payment per shop" -> handlePrintRentPerShop();
+                                        case "Print customer details per shop" -> handlePrintCustomerDetailsPerShop();
                                         case "Print report to file" -> handlePrintReportToFile();
                                         default -> {
                                                 if (logger.isLoggable(java.util.logging.Level.INFO)) {
@@ -249,10 +316,10 @@ public class OperationView extends JFrame {
                         // write data to file for additional payments
                         dataToFiles = new DataToFiles();
                         dataToFiles.writeToFileAll.writeReportToFile(reportData);
-                        welcomePage.getDisplayArea().append(reportData + "\n");
+                        operationView.getDisplayArea().append(reportData + "\n");
                 }
 
-                private void handlePrintMileStonePayments() {
+                private void handlePrintMaintenanceExpences() {
                         for (MileStonePayment payment : mileStonePayments) {
                                 if (logger.isLoggable(java.util.logging.Level.INFO)) {
                                         logger.info(payment.toString());
@@ -268,12 +335,16 @@ public class OperationView extends JFrame {
                         }
                 }
 
-                private void handleAddAdditionalScopePayment() {
-                        String description = welcomePage.getDescriptionField().getText();
-                        double amount = Double.parseDouble(welcomePage.getAmountField().getText());
-                        String date = welcomePage.getDateField().getText();
-                        AdditionalScopePayment payment = new AdditionalScopePayment(amount, description, date);
-                        additionalScopePayments.add(payment);
+                private void handleAddExpense() {
+                        String description = operationView.getDescriptionField().getText();
+                        double amount = Double.parseDouble(operationView.getAmountField().getText());
+                        String date = operationView.getDateField().getText();
+                        Opex opex = (Opex) operationView.getOpexComboBox().getSelectedItem();
+                        Month month = (Month) operationView.monthComboBox.getSelectedItem();
+                        Year year = (Year) operationView.yearComboBox.getSelectedItem();
+                        int quantity = Integer.parseInt(operationView.quantityField.getText());
+                        expenses.add(new Expense(description,amount,date,opex,month,year,quantity));
+                        
 
                         // write data to file for additional payments
                         dataToFiles = new DataToFiles();
