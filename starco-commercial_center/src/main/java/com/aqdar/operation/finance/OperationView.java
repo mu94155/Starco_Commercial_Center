@@ -295,22 +295,39 @@ public class OperationView extends JFrame {
                                 String buttonText = sourceButton.getText();
                                 switch (buttonText) {
                                         case "Add Expense" -> handleAddExpense();
-                                        case "Print Total Maintenance per month" -> handlePrintTotalMaintenancePerMonth();
-                                        case "Print utility per shop per month" -> handlePrintUtilityPerShopPerMonth();
-                                        case "Print total expenses common area per month" -> handlePrintTotalExpensesCommonAreaPerMonth();
-                                        case "Print Rent payment per shop" -> handlePrintRentPerShop();
-                                        case "Print customer details per shop" -> handlePrintCustomerDetailsPerShop();
-                                        case "Print report to file" -> handlePrintReportToFile();
-                                        default -> {
-                                                if (logger.isLoggable(java.util.logging.Level.INFO)) {
-                                                        logger.info("Unknown button clicked: " + buttonText);
-                                                }
-                                        }
-                                }
-                        }
-                }
 
-                private void handlePrintReportToFile() {
+                                        case "Print Total Maintenance per month" -> handlePrintTotalMaintenancePerMonth();
+
+                                        case "Print utility per shop per month" -> handlePrintTotalMaintenancePerMonth();
+
+                                        case "Print total expenses common area per year" -> handlePrintTotalMaintenancePerYear();
+
+                                        case "Print Rent payment per shop" -> handlePrintRentPerShop();
+
+                                        case "Print customer details per shop" -> handlePrintCustomerDetailsPerShop();
+                                        
+                                                                                case "Print report to file" -> handlePrintReportToFile();
+                                                                                
+                                                                                default -> {
+                                                                                        if (logger.isLoggable(java.util.logging.Level.INFO)) {
+                                                                                                logger.info("Unknown button clicked: " + buttonText);
+                                                                                        }
+                                                                                }
+                                                                        }
+                                                                }
+                                                        }
+                                        
+                                                        private Object handlePrintCustomerDetailsPerShop(Customer customer) {
+                                                                for (Customer customer : customers) {
+                                                                        if (logger.isLoggable(java.util.logging.Level.INFO)) {
+                                                                                logger.info(customer.toString());
+                                                                        }
+                                                                }
+                                                                // TODO Auto-generated method stub
+                                                                throw new UnsupportedOperationException("Unimplemented method 'handlePrintCustomerDetailsPerShop'");
+                                                        }
+                                        
+                                                        private void handlePrintReportToFile() {
                         Report report = new Report();
                         String reportData = report.generateReport();
                         // write data to file for additional payments
@@ -319,8 +336,16 @@ public class OperationView extends JFrame {
                         operationView.getDisplayArea().append(reportData + "\n");
                 }
 
-                private void handlePrintMaintenanceExpences() {
-                        for (MileStonePayment payment : mileStonePayments) {
+                private void handlePrintTotalMaintenancePerMonth() {
+                        for (Expense payment : expenses) {
+                                if (logger.isLoggable(java.util.logging.Level.INFO)) {
+                                        logger.info(payment.toString());
+                                }
+                        }
+                }
+
+                private void handlePrintTotalMaintenancePerYear() {
+                        for (Expense payment : expenses) {
                                 if (logger.isLoggable(java.util.logging.Level.INFO)) {
                                         logger.info(payment.toString());
                                 }

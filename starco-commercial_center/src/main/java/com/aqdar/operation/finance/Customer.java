@@ -8,6 +8,7 @@ public class Customer {
   private final String email;
   private final String dateOfBirth;
   private final String shopNumber;
+  private Shop id;
   
 
   public Customer(String name, String address, String phone, String email, String dateOfBirth, String shopNumber) {
@@ -76,5 +77,14 @@ public class Customer {
       ", shopNumber='" + getShopNumber() + "'" +
       "}";
   }
+
+  public String getId(Shop shopNumber) {
+    // TODO Auto-generated method stub
+    this.id=shopNumber;
+    throw new UnsupportedOperationException("Unimplemented method 'getId'");
+  }
+
+
+
 
 }
