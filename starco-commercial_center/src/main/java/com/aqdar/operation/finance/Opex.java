@@ -12,7 +12,9 @@ public enum Opex {
   MAINTENANCE("Maintenance", 500, "Maintenance expenses", 1, ""),
   INSURANCE("Insurance", 1000, "Insurance expenses", 1, ""),
   TRANSPORT("Transport", 500, "Transport expenses", 1, ""),
-  MISCELLANEOUS("Miscellaneous", 1000, "Miscellaneous expenses", 1, "");
+  MISCELLANEOUS("Miscellaneous", 1000, "Miscellaneous expenses", 1, ""),
+  DEFAULT("Default", 0, "Default", 0, "");
+  
   private final String name;
   private final double amount;
   private final String description;

@@ -1,5 +1,7 @@
 package com.aqdar.operation.finance;
 
+import java.util.Date;
+
 public enum Year {
   YEAR_2025("2025"),
   YEAR_2026("2026"),
@@ -26,7 +28,8 @@ public enum Year {
   YEAR_2047("2047"),
   YEAR_2048("2048"),
   YEAR_2049("2049"),
-  YEAR_2050("2050");
+  YEAR_2050("2050")
+  DEFAULT("Year");
 
   private final String year;
 
